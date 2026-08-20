@@ -19,6 +19,8 @@ rule token = parse
   { token lexbuf }
 | '\n'
   { new_line lexbuf; token lexbuf }
+| "//" [^ '\n']* ('\n' | eof)
+  { new_line lexbuf; token lexbuf }
 | digit+ as s
   { CST (Bigint.of_string s) }
 | "let"
@@ -27,10 +29,14 @@ rule token = parse
   { IN }
 | "fun"
   { FUN }
+| "ifz"
+  { IFZ }
 | char+ as s
   { ID s }
 | '+'
   { ADD }
+| '-'
+  { SUB }
 | '('
   { LPAR }
 | ')'
