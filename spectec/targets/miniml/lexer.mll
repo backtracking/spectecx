@@ -21,6 +21,12 @@ rule token = parse
   { new_line lexbuf; token lexbuf }
 | digit+ as s
   { CST (Bigint.of_string s) }
+| "let"
+  { LET }
+| "in"
+  { IN }
+| "fun"
+  { FUN }
 | char+ as s
   { ID s }
 | '+'
@@ -35,12 +41,6 @@ rule token = parse
   { EQUAL }
 | "->"
   { ARROW }
-| "let"
-  { LET }
-| "in"
-  { IN }
-| "fun"
-  { FUN }
 | _ as c
   { Error.error (region lexbuf) (Printf.sprintf "lexical error: %c" c) }
 | eof
@@ -53,15 +53,19 @@ rule token = parse
     let c = open_in filename in
     let lb = from_channel c in
     set_filename lb filename;
-    try let e = Parse.prog token lb in close_in c; Ok e
-    with Error.MinimlParseError (at, msg) ->
+    try let e = Parse.prog token lb in close_in c; Ok e with
+    | Parsing.Parse_error ->
+      Error (Spectec.Error.TaskParseError (region lb, "syntax error"))
+    | Error.MinimlParseError (at, msg) ->
       Error (Spectec.Error.TaskParseError (at, msg))
 
   let parse_string ~spec:_ ~filename content =
-    try let lb = from_string content in
-        set_filename lb filename;
-        Ok [Parse.prog token lb]
-    with Error.MinimlParseError (at, msg) ->
+    let lb = from_string content in
+    set_filename lb filename;
+    try Ok [Parse.prog token lb] with
+    | Parsing.Parse_error ->
+      Error (Spectec.Error.TaskParseError (region lb, "syntax error"))
+    | Error.MinimlParseError (at, msg) ->
       Error (Spectec.Error.TaskParseError (at, msg))
 
 }

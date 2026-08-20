@@ -26,7 +26,7 @@ let rec print_expr fmt e =
   | _, ["Epair"], [e1; e2] ->
       fprintf fmt "(@[%a,@ %a@])" print_expr e1 print_expr e2
   | _ ->
-      fprintf fmt "<print_expr: TODO>"
+      fprintf fmt "<print_expr: unexpected term>"
 
 let print_expr (e: Value.t) : string =
   kasprintf (fun s -> s) "%a" print_expr e

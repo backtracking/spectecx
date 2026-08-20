@@ -106,6 +106,9 @@ module Cli : Cli.Target_cli.S = struct
       [
         Subcommand.make_task target ~name:"eval" ~summary:"Run miniml evaluator"
           (module Eval_cli);
+        Subcommand.make_parse target ~name:"parse"
+          ~summary:"parse a minml program to an IL value"
+          (module Eval_cli);
         Subcommand.make_checkpoint target ~name:"checkpoint";
       ]
 end

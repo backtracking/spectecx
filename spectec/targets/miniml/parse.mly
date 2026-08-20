@@ -5,10 +5,10 @@ open Lang.Il.Value
 open Lang.Il.Case
 
 let v_id (s : string) : value = text s
-let v_op (s : string) : value = [ tag s ] |> case_v ~var:"op"
+let v_op (s : string) : value = [ kw s ] |> case_v ~var:"op"
 
 let mk (c: string) (vl: value list) : value =
-  (tag c :: List.map arg vl) |> case_v ~var:"expr"
+  (kw c :: List.map arg vl) |> case_v ~var:"expr"
 
 let mk_cst n = mk "Ecst" [int n]
 let mk_op o = mk "Eop" [v_op o]

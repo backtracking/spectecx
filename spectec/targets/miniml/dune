@@ -2,6 +2,7 @@
  (modules lexer))
 
 (menhir
+ (flags -v --fixed-exception)
  (modules parse))
 
 (library
