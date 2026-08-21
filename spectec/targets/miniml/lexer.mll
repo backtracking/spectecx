@@ -31,6 +31,10 @@ rule token = parse
   { FUN }
 | "ifz"
   { IFZ }
+| "fst"
+  { FST }
+| "snd"
+  { SND }
 | char+ as s
   { ID s }
 | '+'
