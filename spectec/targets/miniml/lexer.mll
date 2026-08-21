@@ -58,25 +58,23 @@ rule token = parse
 
 {
 
-  let parse_file ~handler filename =
-    handler @@ fun () ->
-    let c = open_in filename in
-    let lb = from_channel c in
+  let parse ~filename lb =
     set_filename lb filename;
-    try let e = Parse.prog token lb in close_in c; Ok e with
+    try Ok (Parse.prog token lb) with
     | Parsing.Parse_error ->
       Error (Spectec.Error.TaskParseError (region lb, "syntax error"))
     | Error.MinimlParseError (at, msg) ->
       Error (Spectec.Error.TaskParseError (at, msg))
 
+  let parse_file ~handler filename =
+    handler @@ fun () ->
+    let c = open_in filename in
+    let lb = from_channel c in
+    let r = parse ~filename lb in close_in c; r
+
   let parse_string ~spec:_ ~filename content =
     let lb = from_string content in
-    set_filename lb filename;
-    try Ok [Parse.prog token lb] with
-    | Parsing.Parse_error ->
-      Error (Spectec.Error.TaskParseError (region lb, "syntax error"))
-    | Error.MinimlParseError (at, msg) ->
-      Error (Spectec.Error.TaskParseError (at, msg))
+    Result.bind (parse ~filename lb) (fun e -> Ok [e])
 
 }
 

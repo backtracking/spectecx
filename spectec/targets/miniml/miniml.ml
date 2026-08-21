@@ -52,7 +52,7 @@ let collect_with ~classify ?dir () =
       |> List.map (fun filename -> { filename; expect = classify filename })
 
 let eval_classify filename =
-  if contains_substring filename "_errors" then Spectec.Task.Negative
+  if contains_substring filename "_error" then Spectec.Task.Negative
   else Spectec.Task.Positive
 
 module Task_common = struct
